@@ -414,3 +414,36 @@ enabled = true
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
 
+
+[functions.structure-note]
+verify_jwt = false
+
+[functions.grade-answer]
+verify_jwt = false
+
+[functions.next-question]
+verify_jwt = false
+
+[functions.find-stuck]
+verify_jwt = false
+
+[functions.apply-review]
+verify_jwt = false
+
+[functions.stuck-feedback]
+verify_jwt = false
+
+[functions.export-data]
+verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = false
+
+[functions.health]
+verify_jwt = false
+
+[functions.embed-entries]
+verify_jwt = false
+
+[functions.dispatch-reminders]
+verify_jwt = false

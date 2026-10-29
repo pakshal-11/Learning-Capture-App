@@ -5,9 +5,11 @@
   "packageManager": "pnpm@12.16.1",
   "scripts": {
     "test": "pnpm -r --if-present test",
-    "typecheck": "pnpm -r --if-present typecheck"
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test:integration": "vitest run --config tests/vitest.config.ts"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"
   }

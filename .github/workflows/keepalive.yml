@@ -1,0 +1,22 @@
+name: Keep Supabase awake
+
+# The free Supabase plan pauses a project after 7 days of inactivity. This calls the public
+# /health Edge Function (one trivial query) every day so that never happens.
+# Setup: GitHub repo > Settings > Secrets and variables > Actions > Variables >
+#        add SUPABASE_FUNCTIONS_URL = https://<project-ref>.supabase.co/functions/v1
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call /health
+        env:
+          URL: ${{ vars.SUPABASE_FUNCTIONS_URL }}
+        run: |
+          test -n "$URL" || { echo "Set the SUPABASE_FUNCTIONS_URL repository variable"; exit 1; }
+          curl --fail --silent --show-error --retry 3 --retry-delay 10 "$URL/health"
