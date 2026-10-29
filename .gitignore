@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+build/
+.expo/
+*.log
+.DS_Store
+
+# secrets and signing keys: never commit
+*.keystore
+*.jks
+google-services.json
+GoogleService-Info.plist
+supabase/.temp/
+supabase/.branches/

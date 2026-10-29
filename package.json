@@ -1,0 +1,14 @@
+{
+  "name": "learning-log",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@12.16.1",
+  "scripts": {
+    "test": "pnpm -r --if-present test",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}
