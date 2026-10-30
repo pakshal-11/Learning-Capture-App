@@ -4,3 +4,7 @@ packages:
 
 allowBuilds:
   esbuild: true
+  tesseract.js: false # only a post-install sponsor message
+
+# Expo/Metro needs a flat node_modules
+nodeLinker: hoisted

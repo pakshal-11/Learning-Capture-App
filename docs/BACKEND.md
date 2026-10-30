@@ -23,7 +23,7 @@ Show `message` to the user. The client can then offer self-grading.
 | `delete-account` | `{confirm:"DELETE"}` | `{ok}`. Deletes the auth user; every table cascades. `usage_log` rows are kept with `user_id = null`. | no |
 | `health` | none, no auth | `{ok, at}`. Keep-alive target. | no |
 | `embed-entries` | cron only (`x-cron-secret`) | Embeds new/edited entries (also done on demand inside `find-stuck`). | no |
-| `dispatch-reminders` | cron only (`x-cron-secret`) | Sends Expo push for due reviews at each user's reminder time. Web Push is added in Phase 2b. | no |
+| `dispatch-reminders` | cron only (`x-cron-secret`) | Sends push for due reviews at each user's reminder time: Expo push to Android, Web Push to browsers (needs secrets `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`; skipped until set). Dead subscriptions are deleted. | no |
 
 `review` result: `{duplicate, stale, entry:{id,status,next_review,times_reviewed,streak_correct,last_result,last_reviewed_at,next_question}, streak:{current,best}}`.
 
@@ -78,6 +78,8 @@ See `packages/core/src/srs.ts` (and `srs.test.ts`). Correct: 1, 3, 7, 14, 30 day
 - No `register-push` function: clients insert their own row in `push_subscriptions` (RLS-protected), which is simpler and equally safe.
 - No `admin-usage` function: the admin view is the `admin_usage_summary()` SQL function, callable only by admins.
 - Embeddings use a "null embedding = needs embedding" flag plus a 5-minute cron and on-demand embedding in `find-stuck`, instead of a pgmq queue (fewer moving parts at this scale).
-- `dispatch-reminders` sends Expo (Android) push only. Web Push sending lands with the PWA in Phase 2b.
+- `dispatch-reminders` sends Expo (Android) and Web Push; the Web Push part has only been type-checked, not exercised against a real browser subscription.
 - No separate pgTAP suite: row-level security is verified by the integration tests against the real database, which also cover Edge Function behaviour. pgTAP would need local Docker.
 - Integration tests call the real Haiku model (about $0.003 per full run) instead of a mock.
+
+- Phase 2a: sync stores data in IndexedDB (web) / AsyncStorage (Android) behind a small key-value interface instead of SQLite. Easy to swap later if a tester accumulates thousands of notes.

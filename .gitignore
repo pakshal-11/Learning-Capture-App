@@ -15,3 +15,12 @@ google-services.json
 GoogleService-Info.plist
 supabase/.temp/
 supabase/.branches/
+
+# local test artifacts
+.ui-test-user.json
+.expo/
+
+# Generated native projects (rebuilt from app.json by `expo prebuild`)
+apps/app/android/
+apps/app/ios/
+.vapid.json
