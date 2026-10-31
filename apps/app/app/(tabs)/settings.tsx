@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Platform, Share } from "react-native";
 import { deleteAccount, exportData } from "../../src/lib/api";
+import { BUILD, refreshWebApp } from "../../src/lib/build";
 import { bubbleAvailable, canDrawOverlays, isBubbleRunning, openOverlaySettings, startBubble, stopBubble } from "../../modules/floating-bubble/src";
 import { disablePush, enablePush, getPushStatus, type PushStatus } from "../../src/lib/push";
 import { useStore, type ThemePref } from "../../src/lib/store";
@@ -181,7 +182,8 @@ export default function Settings() {
 
         {profile?.is_admin ? <Button title="Admin: usage and cost" variant="secondary" icon="stats-chart" onPress={() => router.push("/admin")} /> : null}
         <Button title="Sign out" variant="secondary" icon="log-out-outline" onPress={signOut} />
-        <Text variant="small" muted center>Learning Log {Constants.expoConfig?.version ?? ""} · test build</Text>
+        {Platform.OS === "web" ? <Button title="Get the latest version" variant="ghost" icon="refresh" onPress={() => void refreshWebApp()} /> : null}
+        <Text variant="small" muted center>Learning Log {Constants.expoConfig?.version ?? ""} · test build {BUILD}</Text>
       </Stack>
     </Screen>
   );
