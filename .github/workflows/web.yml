@@ -10,6 +10,7 @@ on:
     paths:
       - "apps/app/**"
       - "packages/**"
+      - "scripts/postbuild-web.mjs"
       - ".github/workflows/web.yml"
 
 concurrency:
