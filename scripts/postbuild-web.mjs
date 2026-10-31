@@ -26,6 +26,8 @@ const head = `
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <style>
       html, body { background: #F6F6FA; overscroll-behavior-y: none; }
+      /* iPhone Safari: 100% is the tall viewport (toolbar hidden), so the bottom of the page, including the tab bar, hides behind the toolbar. dvh is the part you can see. */
+      @supports (height: 100dvh) { html, body, #root { height: 100dvh; } }
       @media (prefers-color-scheme: dark) { html, body { background: #0D0E14; } }
     </style>
     <script>
