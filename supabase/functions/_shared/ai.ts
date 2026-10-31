@@ -178,7 +178,7 @@ interface ResearchOptions<S extends z.ZodTypeAny> {
 }
 
 const MAX_SEARCHES = 3;
-const MAX_FETCHES = 2; // opening the best-matching page to read a whole list (no fee beyond tokens)
+const MAX_FETCHES = 3; // opening the best-matching pages to read whole lists (no fee beyond tokens)
 const MAX_ROUNDS = 5; // searches can pause the turn; each round continues it
 
 /**
