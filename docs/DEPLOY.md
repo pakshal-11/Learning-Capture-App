@@ -16,7 +16,7 @@ Windows note: if PowerShell blocks `supabase` ("running scripts is disabled"), u
 5. Tell the database where the functions live (for the scheduled jobs). Put `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
    and the same `CRON_SECRET` in `.env.test` (or the environment), then run `node scripts/configure-cron.mjs`.
 6. Auth settings in the Supabase dashboard (change them there, never with `supabase config push`, which overwrites the remote auth settings with the local file). Edit the **Confirm signup** and **Magic Link** email templates to include `{{ .Token }}` (see APP.md): enable Email (OTP), add a custom SMTP (Resend or Brevo free tier; the default
-   sender allows only a few emails per hour), later enable Google. Set the Site URL and redirect URLs once the web app is hosted.
+   sender allows only a few emails per hour), later enable Google. Set the Site URL and redirect URLs once the web app is hosted (see APP.md > Hosting the web app).
 7. Keep-alive: in the GitHub repo, Settings > Secrets and variables > Actions > Variables, add
    `SUPABASE_FUNCTIONS_URL` = `https://<project-ref>.supabase.co/functions/v1`. The workflow `keepalive.yml` then pings `/health` daily.
 8. Anthropic console: set a monthly spend limit (the app's own cap is $10/month by default, this is a second backstop).

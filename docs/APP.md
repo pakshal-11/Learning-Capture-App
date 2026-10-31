@@ -99,6 +99,24 @@ It is signed with Expo's default debug key, which is fine for a test build (ever
 The native code (speech, ML Kit, share intent, the bubble) cannot be compiled on a machine without the Android SDK, so the first run
 of this workflow is the first real compile of it.
 
+### Hosting the web app (Cloudflare Pages, free)
+
+The workflow `.github/workflows/web.yml` builds the web app and publishes it to Cloudflare Pages on every push to `main` that touches
+the app, or by hand (Actions > Deploy web app > Run workflow). Until the two secrets below exist it skips itself with a notice.
+`public/_redirects` makes every address open the app, and `public/_headers` stops the service worker and page from being cached stale.
+
+One-time setup:
+1. Make a free account at https://dash.cloudflare.com. Copy your **Account ID** (Workers & Pages > Overview, right-hand side).
+2. My Profile > API Tokens > Create Token > Create Custom Token. Permission: **Account > Cloudflare Pages > Edit**. Copy the token once (it is shown only once).
+3. GitHub > Settings > Secrets and variables > Actions > **Secrets** tab: add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+4. Same page, **Variables** tab: make sure `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` exist (needed for the Android build too), and add
+   `EXPO_PUBLIC_VAPID_PUBLIC_KEY` (the public key from `apps/app/.env`) so web reminders work. Optional: `CLOUDFLARE_PAGES_PROJECT` (default `learning-log`),
+   `EXPO_PUBLIC_GOOGLE_SIGNIN` = `1` once Google sign-in is set up.
+5. Run the workflow. The first run creates the project; the address is `https://<project>.pages.dev` (`learning-log.pages.dev` if the name is free).
+6. Supabase dashboard > Authentication > URL Configuration: set **Site URL** to that address and add it to **Redirect URLs** (needed for Google sign-in).
+
+Web push on a hosted site only works over https, which `pages.dev` provides. On iPhone, reminders work only after Share > Add to Home Screen.
+
 ## Known limits
 
 - Never compiled or run on an Android device yet (this machine has no Android SDK). The web side is tested; the Android side is written
