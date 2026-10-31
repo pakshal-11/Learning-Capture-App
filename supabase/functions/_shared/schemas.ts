@@ -25,7 +25,7 @@ export const ResearchedNote = z.object({
   recall_question: text(400),
   apply_it: text(600),
   category: text(60),
-  details: z.string().trim().max(2500).optional().default(""),
+  details: z.string().trim().max(3500).optional().default(""), // over-long is rejected: the prompt asks for about 2500
   source_urls: z.array(z.string().max(2000)).max(8).optional().default([]),
 });
 export type ResearchedNote = z.infer<typeof ResearchedNote>;

@@ -206,11 +206,12 @@ describe("AI functions (real Haiku calls, a few cents at most)", () => {
   }, 60_000);
 
   it("looks a thin note up on the web and returns real source links", async () => {
-    const r = await callFn("research-note", { raw_text: "Heard about the Eisenhower matrix today" }, A);
+    const r = await callFn("research-note", { raw_text: "I heard about 20 formulas for LinkedIn opening and hooks" }, A);
     expect(r.status).toBe(200);
     expect(r.json.ok, JSON.stringify(r.json)).toBe(true);
     expect(r.json.found).toBe(true);
-    expect(r.json.details.length).toBeGreaterThan(50);
+    // The learner wants the formulas themselves, not a description: expect a real numbered list.
+    expect((r.json.details.match(/^\s*\d+[.)]/gm) ?? []).length, r.json.details).toBeGreaterThanOrEqual(10);
     expect(r.json.sources.length).toBeGreaterThan(0);
     for (const s of r.json.sources) expect(s.url).toMatch(/^https?:\/\//);
     for (const k of ["topic", "key_idea", "recall_question", "apply_it", "category"]) {
@@ -396,7 +397,7 @@ describe("reminders", () => {
     const first = await callFn("dispatch-reminders", {}, cron);
     expect(first.status).toBe(200);
     expect(first.json.claimed).toBeGreaterThanOrEqual(1);
-    expect(first.json.skipped_webpush).toBeGreaterThanOrEqual(1);
+    // Whether the fake web-push address is skipped or tried (and removed as dead) depends on whether the VAPID secrets are set.
 
     const second = await callFn("dispatch-reminders", {}, cron);
     expect(second.json.claimed).toBe(0);

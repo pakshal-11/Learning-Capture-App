@@ -178,7 +178,8 @@ interface ResearchOptions<S extends z.ZodTypeAny> {
 }
 
 const MAX_SEARCHES = 3;
-const MAX_ROUNDS = 4; // searches can pause the turn; each round continues it
+const MAX_FETCHES = 2; // opening the best-matching page to read a whole list (no fee beyond tokens)
+const MAX_ROUNDS = 5; // searches can pause the turn; each round continues it
 
 /**
  * Like runTool(), but Claude may call Anthropic's web_search tool (at most MAX_SEARCHES times) before it saves
@@ -225,6 +226,7 @@ export async function runResearch<S extends z.ZodTypeAny>(
   let lastError = "";
   const results = new Map<string, ResearchSource>();
   const messages: Array<{ role: "user" | "assistant"; content: unknown }> = [{ role: "user", content: opts.user }];
+  let withFetch = true; // dropped if the organisation has web fetch switched off in the Anthropic Console
 
   try {
     if (!key) throw new Error("ANTHROPIC_API_KEY is not set");
@@ -237,7 +239,11 @@ export async function runResearch<S extends z.ZodTypeAny>(
           model,
           max_tokens: 4000,
           system: [{ type: "text", text: opts.system, cache_control: { type: "ephemeral" } }],
-          tools: [{ type: "web_search_20250305", name: "web_search", max_uses: MAX_SEARCHES }, opts.tool],
+          tools: [
+            { type: "web_search_20250305", name: "web_search", max_uses: MAX_SEARCHES },
+            ...(withFetch ? [{ type: "web_fetch_20250910", name: "web_fetch", max_uses: MAX_FETCHES, max_content_tokens: 12000 }] : []),
+            opts.tool,
+          ],
           tool_choice: { type: "auto" },
           messages,
         }),
@@ -246,6 +252,11 @@ export async function runResearch<S extends z.ZodTypeAny>(
       if (!r.ok) {
         lastError = `http_${r.status}`;
         console.error("research call failed", r.status, JSON.stringify(body).slice(0, 300));
+        // Web fetch switched off for the organisation: carry on with search alone.
+        if (r.status === 400 && withFetch && /web.?fetch/i.test(JSON.stringify(body))) {
+          withFetch = false;
+          continue;
+        }
         break;
       }
       const u = body.usage ?? {};
