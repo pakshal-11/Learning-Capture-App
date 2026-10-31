@@ -20,6 +20,9 @@ Windows note: if PowerShell blocks `supabase` ("running scripts is disabled"), u
 7. Keep-alive: in the GitHub repo, Settings > Secrets and variables > Actions > Variables, add
    `SUPABASE_FUNCTIONS_URL` = `https://<project-ref>.supabase.co/functions/v1`. The workflow `keepalive.yml` then pings `/health` daily.
 8. Anthropic console: set a monthly spend limit (the app's own cap is $10/month by default, this is a second backstop).
+   Also make sure **web search** is allowed for the organisation (Console > Settings > Capabilities / Privacy); the `research-note` function needs it.
+   Web search costs $10 per 1,000 searches on top of tokens (at most 3 searches per look-up, 10 look-ups per user per day by default;
+   change with `update app_config set value = value || '{"user_daily_research": 5}' where key = 'ai_limits';`).
 
 ## Updating
 

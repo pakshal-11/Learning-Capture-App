@@ -13,7 +13,8 @@ Show `message` to the user. The client can then offer self-grading.
 
 | Function | Input | Output | AI |
 |---|---|---|---|
-| `structure-note` | `{raw_text}` (3-4000 chars) | `{ok, note:{topic,key_idea,recall_question,apply_it,category}, quota}`. Nothing saved: the client previews, the user edits, the client inserts the entry. | yes |
+| `structure-note` | `{raw_text}` (3-4000 chars) | `{ok, note:{topic,key_idea,recall_question,apply_it,category,needs_research}, quota}`. `needs_research` is true when the note names something without saying what it contains (the app then calls `research-note`). Nothing saved: the client previews, the user edits, the client inserts the entry. | yes |
+| `research-note` | `{raw_text}` (3-4000 chars) | `{ok, found, note:{topic,key_idea,recall_question,apply_it,category}, details, sources:[{title,url}], quota}`. Claude Haiku searches the web (Anthropic's built-in `web_search`, at most 3 searches) for what a thin note refers to, and builds the card from what it found. `sources` are only pages that really came back from the search. Nothing saved. Own daily limit: `ai_limits.user_daily_research` (default 10, rolling 24 h). Each search adds $0.01 to the logged cost. | yes (+ web search) |
 | `grade-answer` | `{entry_id, review_id, question, answer}` | `{ok, grade, feedback, correct_answer, next_question, review, quota}`. Updates the schedule and stores `next_question` on the entry. | yes |
 | `next-question` | `{entry_id}` | `{ok, question, quota}`. Stores it as `entries.next_question`. | yes |
 | `find-stuck` | `{problem}` (3-1000 chars) | `{ok, query_id, none_relevant, matches:[{entry_id,topic,key_idea,apply_it,why,how_to_use}], message, quota}`. Own entries only. 0 matches = `none_relevant:true`. | yes (skipped when the user has no candidates) |
@@ -80,6 +81,9 @@ See `packages/core/src/srs.ts` (and `srs.test.ts`). Correct: 1, 3, 7, 14, 30 day
 - Embeddings use a "null embedding = needs embedding" flag plus a 5-minute cron and on-demand embedding in `find-stuck`, instead of a pgmq queue (fewer moving parts at this scale).
 - `dispatch-reminders` sends Expo (Android) and Web Push; the Web Push part has only been type-checked, not exercised against a real browser subscription.
 - No separate pgTAP suite: row-level security is verified by the integration tests against the real database, which also cover Edge Function behaviour. pgTAP would need local Docker.
+- Web research was added after Phase 2 at the owner's request (PLAN.md originally excluded it). It covers the user's own thin notes only: the server never fetches links a user pasted, and it does not search for other users' data.
+  The researched text is stored inside `entries.raw_text` under an "Added from the web" marker (no new column), so it syncs, exports and searches like any note.
+  The Anthropic Console must allow web search (Settings > Privacy/Capabilities), or the function returns a normal "AI had a problem" message.
 - Integration tests call the real Haiku model (about $0.003 per full run) instead of a mock.
 
 - Phase 2a: sync stores data in IndexedDB (web) / AsyncStorage (Android) behind a small key-value interface instead of SQLite. Easy to swap later if a tester accumulates thousands of notes.

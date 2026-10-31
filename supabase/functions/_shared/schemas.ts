@@ -11,8 +11,24 @@ export const StructuredNote = z.object({
   recall_question: text(400),
   apply_it: text(600),
   category: text(60),
+  // True when the note names something but never says what it contains (the app then offers a web look-up).
+  needs_research: z.boolean().optional().default(false),
 });
 export type StructuredNote = z.infer<typeof StructuredNote>;
+
+// A study card built from web search results. `details` is the actual content found; `source_urls` are
+// checked against the real search results before use, so the model cannot invent a link.
+export const ResearchedNote = z.object({
+  found: z.boolean(),
+  topic: text(120),
+  key_idea: text(600),
+  recall_question: text(400),
+  apply_it: text(600),
+  category: text(60),
+  details: z.string().trim().max(2500).optional().default(""),
+  source_urls: z.array(z.string().max(2000)).max(8).optional().default([]),
+});
+export type ResearchedNote = z.infer<typeof ResearchedNote>;
 
 export const GradeResult = z.object({
   grade: z.enum(["Correct", "Partly", "Missed"]),

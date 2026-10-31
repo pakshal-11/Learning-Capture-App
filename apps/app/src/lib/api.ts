@@ -64,7 +64,18 @@ export interface StructuredNote {
 }
 
 export const structureNote = (raw_text: string) =>
-  invoke<AiResult<{ note: StructuredNote }>>("structure-note", { raw_text });
+  invoke<AiResult<{ note: StructuredNote & { needs_research?: boolean } }>>("structure-note", { raw_text });
+
+export interface WebSource {
+  title: string;
+  url: string;
+}
+
+/** Looks the note's subject up on the web. `details` is the content found; `sources` are real result pages. */
+export const researchNote = (raw_text: string) =>
+  invoke<AiResult<{ found: boolean; note: StructuredNote; details: string; sources: WebSource[] }>>("research-note", {
+    raw_text,
+  });
 
 export interface ReviewState {
   duplicate: boolean;

@@ -41,6 +41,15 @@ export const PRIVACY_SECTIONS: PrivacySection[] = [
     ],
   },
   {
+    title: "Web look-ups",
+    points: [
+      "If a note only names something (for example \"20 hook formulas\"), the app can look it up on the web so your note holds the real details.",
+      "To do this, the text of that note is sent to Anthropic, who run the web search for us. The search results come back with links to their sources.",
+      "Details found this way are clearly labelled \"Added from the web\", with their sources, and you can remove them before saving. Check them: web pages can be wrong.",
+      "We never open links you paste. Only notes you choose to organise are looked up.",
+    ],
+  },
+  {
     title: "Where it is stored",
     points: [
       "In Supabase, hosted in Mumbai, India, and on your own device so the app works offline.",

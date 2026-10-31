@@ -268,7 +268,7 @@ The uncertain items are R1 (overlay) and R5 (embeddings); the range reflects the
 
 **R8. Build environment.** You're on Windows 11. The APK needs JDK + Android SDK (or EAS free builds, which are queue-limited), Tauri needs Rust + MSVC + WebView2, and local Supabase needs Docker Desktop. The macOS desktop installer needs a macOS CI runner. Default plan: GitHub Actions builds the APK and the Windows/macOS/Linux installers, and unsigned installers will show SmartScreen/Gatekeeper warnings. I'll document the click-through for testers.
 
-**Assumptions:** testers are 18+; English UI; one device per user is the common case; no iOS native app; Expo Push Service is acceptable as the FCM path; the NOT-in-this-build list stays out (no web enrichment, cross-user learning, WhatsApp, or video).
+**Assumptions:** testers are 18+; English UI; one device per user is the common case; no iOS native app; Expo Push Service is acceptable as the FCM path; the NOT-in-this-build list stays out (no cross-user learning, WhatsApp, or video). **Change, 2026-10-31:** the owner approved a narrow form of web enrichment: when a note only names something, the app looks it up on the web (Anthropic's built-in web search, capped per user and in the global budget) and adds labelled details with sources. Pasted links are still never fetched.
 
 ---
 

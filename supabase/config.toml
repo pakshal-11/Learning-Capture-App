@@ -418,6 +418,9 @@ enabled = true
 [functions.structure-note]
 verify_jwt = false
 
+[functions.research-note]
+verify_jwt = false
+
 [functions.grade-answer]
 verify_jwt = false
 
